@@ -306,11 +306,6 @@
       <ClaimType Id="organisationName">
         <DisplayName>Organisation Name</DisplayName>
         <DataType>string</DataType>
-        <DefaultPartnerClaimTypes>
-          <Protocol Name="OAuth2" PartnerClaimType="organisation_name" />
-          <Protocol Name="OpenIdConnect" PartnerClaimType="organisation_name" />
-          <Protocol Name="SAML2" PartnerClaimType="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/organisationname" />
-        </DefaultPartnerClaimTypes>
         <UserHelpText>Your organisation name.</UserHelpText>
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
@@ -524,13 +519,10 @@
             <!-- Required claims -->
             <PersistedClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
             <PersistedClaim ClaimTypeReferenceId="newPassword" PartnerClaimType="password" />
-            <PersistedClaim ClaimTypeReferenceId="displayName" DefaultValue="unknown" />
+            <PersistedClaim ClaimTypeReferenceId="displayName" />
             <PersistedClaim ClaimTypeReferenceId="passwordPolicies" DefaultValue="DisablePasswordExpiration" />
-
-            <!-- Optional claims. -->
             <PersistedClaim ClaimTypeReferenceId="givenName" />
             <PersistedClaim ClaimTypeReferenceId="surname" />
-            <PersistedClaim ClaimTypeReferenceId="organisationName" />
           </PersistedClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="objectId" />
@@ -602,11 +594,8 @@
           <PersistedClaims>
             <!-- Required claims -->
             <PersistedClaim ClaimTypeReferenceId="objectId" />
-
-            <!-- Optional claims -->
             <PersistedClaim ClaimTypeReferenceId="givenName" />
             <PersistedClaim ClaimTypeReferenceId="surname" />
-            <PersistedClaim ClaimTypeReferenceId="organisationName" />
           </PersistedClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -629,7 +618,6 @@
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
-            <OutputClaim ClaimTypeReferenceId="organisationName" />
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -650,18 +638,12 @@
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="userPrincipalName" />
-
-            <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
-                 ValidationTechnicalProfile referenced below so it can be written to directory after being updated by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
             <InputClaim ClaimTypeReferenceId="givenName" />
             <InputClaim ClaimTypeReferenceId="surname" />
           </InputClaims>
           <OutputClaims>
             <!-- Required claims -->
             <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
-
-            <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
-                 ValidationTechnicalProfile referenced below so it can be written to directory after being updated by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
           </OutputClaims>
@@ -698,11 +680,11 @@
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
             <OutputClaim ClaimTypeReferenceId="newUser" />
 
-            <!-- Optional claims, to be collected from the user -->
-            <OutputClaim ClaimTypeReferenceId="displayName" />
-            <OutputClaim ClaimTypeReferenceId="givenName" />
-            <OutputClaim ClaimTypeReferenceId="surName" />
-            <OutputClaim ClaimTypeReferenceId="organisationName" />
+            <!-- Additional mandatory claims, to be collected from the user -->
+            <OutputClaim ClaimTypeReferenceId="displayName"  Required="true"/>
+            <OutputClaim ClaimTypeReferenceId="givenName"  Required="true"/>
+            <OutputClaim ClaimTypeReferenceId="surName"  Required="true"/>
+            <OutputClaim ClaimTypeReferenceId="organisationName" Required="true"/>
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
