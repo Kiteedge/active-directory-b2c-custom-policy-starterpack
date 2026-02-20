@@ -309,7 +309,6 @@
         <UserHelpText>Your organisation name.</UserHelpText>
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
-
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -343,8 +342,7 @@
           <InputParameter Id="AssertIfRightOperandIsNotPresent" DataType="boolean" Value="true" />
           <InputParameter Id="TreatAsEqualIfWithinMillseconds" DataType="int" Value="300000" />
         </InputParameters>
-      </ClaimsTransformation>
-      
+      </ClaimsTransformation>      
     </ClaimsTransformations>
 
     <ClientDefinitions>
@@ -354,7 +352,6 @@
     </ClientDefinitions>
 
     <ContentDefinitions>
-
       <!-- This content definition is to render an error page that displays unhandled errors. -->
       <ContentDefinition Id="api.error">
         <LoadUri>~/tenant/templates/AzureBlue/exception.cshtml</LoadUri>
@@ -446,7 +443,6 @@
         in this section, then it cannot be used in a technical policy.
     -->
   <ClaimsProviders>
-
     <ClaimsProvider>
       <DisplayName>Local Account SignIn</DisplayName>
       <TechnicalProfiles>
@@ -490,7 +486,6 @@
     <ClaimsProvider>
       <DisplayName>Azure Active Directory</DisplayName>
       <TechnicalProfiles>
-
         <TechnicalProfile Id="AAD-Common">
           <DisplayName>Azure Active Directory</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -505,7 +500,7 @@
         </TechnicalProfile>
 
         <!-- Technical profiles for local accounts -->
-
+        
         <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
           <Metadata>
             <Item Key="Operation">Write</Item>
@@ -580,7 +575,6 @@
         </TechnicalProfile>
 
         <!-- Technical profiles for updating user record using objectId -->
-
         <TechnicalProfile Id="AAD-UserWriteProfileUsingObjectId">
           <Metadata>
             <Item Key="Operation">Write</Item>
@@ -621,7 +615,6 @@
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
-
       </TechnicalProfiles>
     </ClaimsProvider>
 
@@ -833,47 +826,45 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+    
     <!--claims provider for refresh token revocation-->
-  <ClaimsProvider>
-    <DisplayName>Refresh token journey</DisplayName>
-    <TechnicalProfiles>
-      <TechnicalProfile Id="RefreshTokenReadAndSetup">
-        <DisplayName>Trustframework Policy Engine Refresh Token Setup Technical Profile</DisplayName>
-        <Protocol Name="None" />
-        <OutputClaims>
-          <OutputClaim ClaimTypeReferenceId="objectId" />
-          <OutputClaim ClaimTypeReferenceId="refreshTokenIssuedOnDateTime" />
-           <!--Requirement: Claims that you return in the relying party technical profile output claims
-            that are not stored in Azure AD B2C, must be added to the output claims collection here-->
-          <!--
+    <ClaimsProvider>
+      <DisplayName>Refresh token journey</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="RefreshTokenReadAndSetup">
+          <DisplayName>Trustframework Policy Engine Refresh Token Setup Technical Profile</DisplayName>
+          <Protocol Name="None" />
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="refreshTokenIssuedOnDateTime" />
+             <!--Requirement: Claims that you return in the relying party technical profile output claims
+              that are not stored in Azure AD B2C, must be added to the output claims collection here-->
+            <!--
           
-          <OutputClaim ClaimTypeReferenceId="RESTAPIclaim1" />
-          <OutputClaim ClaimTypeReferenceId="IDPclaim1" />
-           -->
-        </OutputClaims>
-      </TechnicalProfile>
+            <OutputClaim ClaimTypeReferenceId="RESTAPIclaim1" />
+            <OutputClaim ClaimTypeReferenceId="IDPclaim1" />
+             -->
+          </OutputClaims>
+        </TechnicalProfile>
 
-
-      <TechnicalProfile Id="AAD-UserReadUsingObjectId-CheckRefreshTokenDate">
-        <OutputClaims>
-          <OutputClaim ClaimTypeReferenceId="refreshTokensValidFromDateTime" />
-          <OutputClaim ClaimTypeReferenceId="displayName" />
-        </OutputClaims>
-        <OutputClaimsTransformations>
-          <OutputClaimsTransformation ReferenceId="AssertRefreshTokenIssuedLaterThanValidFromDate" />
-        </OutputClaimsTransformations>
-        <IncludeTechnicalProfile ReferenceId="AAD-UserReadUsingObjectId" />
-      </TechnicalProfile>
-    </TechnicalProfiles>
-  </ClaimsProvider>
-
+        <TechnicalProfile Id="AAD-UserReadUsingObjectId-CheckRefreshTokenDate">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="refreshTokensValidFromDateTime" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertRefreshTokenIssuedLaterThanValidFromDate" />
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-UserReadUsingObjectId" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
   </ClaimsProviders>
 
   <UserJourneys>
-
     <UserJourney Id="SignUpOrSignIn">
-      <OrchestrationSteps>
-
+      <OrchestrationSteps>     
+        <!-- Step 1: Sign-in or sign-up page -->
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
@@ -902,8 +893,7 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-
+        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
@@ -973,7 +963,6 @@
         </OrchestrationStep>
         <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
-    </UserJourney>
-    
+    </UserJourney>    
   </UserJourneys>
 </TrustFrameworkPolicy>
