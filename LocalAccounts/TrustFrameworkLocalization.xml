@@ -120,6 +120,8 @@
           <LocalizedString ElementType="ClaimType" ElementId="surname" StringId="UserHelpText">Your surname (also known as family name or last name).</LocalizedString>
           <LocalizedString ElementType="ClaimType" ElementId="givenName" StringId="DisplayName">Given Name</LocalizedString>
           <LocalizedString ElementType="ClaimType" ElementId="givenName" StringId="UserHelpText">Your given name (also known as first name).</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="organisationName" StringId="DisplayName">Organisation Name</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="organisationName" StringId="UserHelpText">Your organisation name.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="button_continue">Create</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="error_fieldIncorrect">One or more fields are filled out incorrectly. Please check your entries and try again.</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="error_passwordEntryMismatch">The password entry fields do not match. Please enter the same password in both fields and try again.</LocalizedString>
