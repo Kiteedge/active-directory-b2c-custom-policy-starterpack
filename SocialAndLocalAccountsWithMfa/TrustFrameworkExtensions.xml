@@ -18,6 +18,7 @@
 
   <ClaimsProviders>
 
+<!--
     <ClaimsProvider>
       <DisplayName>Facebook</DisplayName>
       <TechnicalProfiles>
@@ -30,19 +31,19 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
-
+-->
 
     <ClaimsProvider>
       <DisplayName>Local Account SignIn</DisplayName>
       <TechnicalProfiles>
          <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">ProxyIdentityExperienceFrameworkAppId</Item>
-            <Item Key="IdTokenAudience">IdentityExperienceFrameworkAppId</Item>
+            <Item Key="client_id">acd2113a-7273-42b4-bfe2-6326d0a19471</Item>
+            <Item Key="IdTokenAudience">ba415fe5-e920-4ca3-9696-0beeb4423a18</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="ProxyIdentityExperienceFrameworkAppId" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="IdentityExperienceFrameworkAppId" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="acd2113a-7273-42b4-bfe2-6326d0a19471" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="ba415fe5-e920-4ca3-9696-0beeb4423a18" />
           </InputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
