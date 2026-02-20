@@ -43,6 +43,7 @@
             <Item Key="ServiceUrl">https://ngrsdb6x-4101.uks1.devtunnels.ms/azureadb2c/create</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" />
