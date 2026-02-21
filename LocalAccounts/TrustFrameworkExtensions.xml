@@ -33,17 +33,36 @@
       </TechnicalProfiles>
     </ClaimsProvider>
 
+    <!--
+      override base LocalAccountSignUpWithLogonEmail with additional validation step
+      which creates the organisatuin, team and user vua the contours users api
+      if the status is not 200, the user journey does not advance
+    -->
     <ClaimsProvider>
-      <DisplayName>Users API</DisplayName>
+      <DisplayName>Local Account</DisplayName>
       <TechnicalProfiles>
-        <TechnicalProfile Id="UsersAPI-UserCreateUsingObjectId">
-          <DisplayName>Users API User Create Using ObjectId</DisplayName>
+        <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">  
+          <ValidationTechnicalProfiles>     
+            <ValidationTechnicalProfile ReferenceId="UsersAPI-UserCreate" />      
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+      </TechnicalProfiles>    
+    </ClaimsProvider>
+    
+    <ClaimsProvider>
+      <DisplayName>Users API User Creation</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="UsersAPI-UserCreate">
+          <DisplayName>Users API User Creation</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ServiceUrl">https://ngrsdb6x-4101.uks1.devtunnels.ms/azureadb2c/create</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">true</Item>
+            <Item Key="RaiseErrorIfHttpStatusCodeIsNotSuccess">true</Item>
+            <Item Key="DebugMode">true</Item>
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" />
@@ -53,8 +72,6 @@
             <InputClaim ClaimTypeReferenceId="displayName" />
             <InputClaim ClaimTypeReferenceId="organisationName" />
           </InputClaims>
-          <OutputClaims>
-          </OutputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
@@ -72,7 +89,8 @@
             <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
           </ClaimsExchanges>
         </OrchestrationStep>
-
+        
+        <!-- Step 2: Excecute sign-up unless 'objectId' already exists -->
         <OrchestrationStep Order="2" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
@@ -84,29 +102,17 @@
             <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
           </ClaimsExchanges>
         </OrchestrationStep>
-
-        <OrchestrationStep Order="3" Type="ClaimsExchange">
-          <Preconditions>
-            <Precondition Type="ClaimEquals" ExecuteActionsIf="false">
-              <Value>newUser</Value>
-              <Value>true</Value>
-              <Action>SkipThisOrchestrationStep</Action>
-            </Precondition>
-          </Preconditions>
-          <ClaimsExchanges>
-            <ClaimsExchange Id="UsersAPIUserCreateWithObjectId" TechnicalProfileReferenceId="UsersAPI-UserCreateUsingObjectId" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
         
-        <!-- This step reads any user attributes that we may not have received when in the token. -->
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
+        <!-- Step 3: Retrieve additional user attributes from Azure AD B2C that may not have been included in the token so far -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
-      </OrchestrationSteps>
+        <!-- Step 4: Issues the final token to the client -->
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        </OrchestrationSteps>
       
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>   
