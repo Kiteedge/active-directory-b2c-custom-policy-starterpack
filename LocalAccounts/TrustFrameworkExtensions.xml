@@ -43,8 +43,8 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">  
           <ValidationTechnicalProfiles>     
-            <ValidationTechnicalProfile ReferenceId="UsersAPI-UserCreate" />      
-            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          <ValidationTechnicalProfile ReferenceId="UsersAPI-UserCreate" />      
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
       </TechnicalProfiles>    
@@ -63,6 +63,8 @@
             <Item Key="AllowInsecureAuthInProduction">true</Item>
             <Item Key="RaiseErrorIfHttpStatusCodeIsNotSuccess">true</Item>
             <Item Key="DebugMode">true</Item>
+            <Item Key="ContentType">application/json</Item> 
+            <Item Key="UseNoCache">true</Item>
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" />
