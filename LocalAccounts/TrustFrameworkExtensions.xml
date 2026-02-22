@@ -14,13 +14,37 @@
   </BasePolicy>
   
   <BuildingBlocks>
+    <ClaimsSchema> 
+      <ClaimType Id="extension_ContoursUserCreated">
+        <DisplayName>Contours User Created Status</DisplayName>
+        <DataType>boolean</DataType>
+        <UserHelpText>Indicates if the user has been created in the external system.</UserHelpText>
+      </ClaimType> 
+    </ClaimsSchema> 
   </BuildingBlocks>
 
-  <ClaimsProviders>
+  <ClaimsProviders>    
     <ClaimsProvider>
-      <DisplayName>Local Account SignIn</DisplayName>
+      <DisplayName>Azure Active Directory Customisations</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AAD-Common">
+          <DisplayName>Azure Active Directory</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <!-- Object ID of the b2c-extensions-app -->
+            <Item Key="ApplicationObjectId">465a788a-16e8-4e42-969e-1dcdd66ef8a1</Item>
+            <!-- Application/Client ID of the b2c-extensions-app -->
+            <Item Key="ClientId">161225c4-99fc-42eb-9d9e-fcef5f5e6f30</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Local Account Customisations</DisplayName>
       <TechnicalProfiles>
          <TechnicalProfile Id="login-NonInteractive">
+          <DisplayName>Local Account Signin</DisplayName>
           <Metadata>
             <Item Key="client_id">acd2113a-7273-42b4-bfe2-6326d0a19471</Item>
             <Item Key="IdTokenAudience">ba415fe5-e920-4ca3-9696-0beeb4423a18</Item>
@@ -39,19 +63,50 @@
       if the status is not 200, the user journey does not advance
     -->
     <ClaimsProvider>
-      <DisplayName>Local Account</DisplayName>
+      <DisplayName>Local Account Customizations</DisplayName>
       <TechnicalProfiles>
+        <!-- Override for the Sign-Up process -->
         <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">  
-          <ValidationTechnicalProfiles>     
-          <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
-          <ValidationTechnicalProfile ReferenceId="UsersAPI-UserCreate" />      
+          <DisplayName>Local Account Signup</DisplayName>
+          <ValidationTechnicalProfiles>   
+            <!-- 1. Create the user in B2C -->
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+            
+            <!-- 2. Create the user in Contours (only if not already created) -->
+            <ValidationTechnicalProfile ReferenceId="UsersAPI-UserCreate">
+              <Preconditions>
+                <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+                  <Value>extension_ApiUserCreated</Value>
+                  <Value>true</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>
+            </ValidationTechnicalProfile>
+           
+            <!-- 3. Mark the success in B2C so we don't call the API again on retry -->
+            <ValidationTechnicalProfile ReferenceId="AAD-SetContoursUserCreatedFlag" />        
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
+         
+        <!-- Update the user record in AAD with flag to indicate Contours user created -->
+        <TechnicalProfile Id="AAD-SetContoursUserCreatedFlag">
+          <DisplayName>UserCreated Flag Persistence</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+            <Item Key="UserMessageIfClaimsPrincipalDoesNotExist">The user account was not found.</Item>
+          </Metadata>
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="objectId" />
+            <PersistedClaim ClaimTypeReferenceId="extension_ContoursUserCreated" DefaultValue="true" />
+          </PersistedClaims>
+        </TechnicalProfile>           
       </TechnicalProfiles>    
     </ClaimsProvider>
-    
+
     <ClaimsProvider>
-      <DisplayName>Users API User Creation</DisplayName>
+      <DisplayName>Contours User Creation</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="UsersAPI-UserCreate">
           <DisplayName>Users API User Creation</DisplayName>
