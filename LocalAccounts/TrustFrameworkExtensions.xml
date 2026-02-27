@@ -37,6 +37,29 @@
             <Item Key="ClientId">161225c4-99fc-42eb-9d9e-fcef5f5e6f30</Item>
           </Metadata>
         </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserReadUsingObjectId">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
+            <OutputClaim ClaimTypeReferenceId="email" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail" />
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
 
@@ -53,6 +76,21 @@
             <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="acd2113a-7273-42b4-bfe2-6326d0a19471" />
             <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="ba415fe5-e920-4ca3-9696-0beeb4423a18" />
           </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+          </OutputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Local Account Customisations</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+          <DisplayName>Local Account Signin</DisplayName>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+          </OutputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
@@ -133,6 +171,20 @@
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
+
+  <ClaimsTransformations>
+    <ClaimsTransformation Id="CopySignInNamesEmailToEmail" TransformationMethod="FormatString">
+      <InputClaims>
+        <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" TransformationClaimType="inputClaim1" />
+      </InputClaims>
+      <InputParameters>
+        <InputParameter Id="stringFormat" DataType="string" Value="{0}" />
+      </InputParameters>
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim" />
+      </OutputClaims>
+    </ClaimsTransformation>
+  </ClaimsTransformations>
 
   <UserJourneys>
     <UserJourney Id="SignUpOrSignIn">
