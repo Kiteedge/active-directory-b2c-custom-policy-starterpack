@@ -19,8 +19,19 @@
         <DisplayName>Contours User Created Status</DisplayName>
         <DataType>boolean</DataType>
         <UserHelpText>Indicates if the user has been created in the external system.</UserHelpText>
-      </ClaimType> 
-    </ClaimsSchema> 
+      </ClaimType>
+    </ClaimsSchema>
+
+    <ClaimsTransformations>
+      <ClaimsTransformation Id="CopySignInNamesEmailToEmail" TransformationMethod="CopyClaim">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" TransformationClaimType="inputClaim" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+    </ClaimsTransformations>
   </BuildingBlocks>
 
   <ClaimsProviders>    
@@ -35,6 +46,7 @@
             <Item Key="ApplicationObjectId">465a788a-16e8-4e42-969e-1dcdd66ef8a1</Item>
             <!-- Application/Client ID of the b2c-extensions-app -->
             <Item Key="ClientId">161225c4-99fc-42eb-9d9e-fcef5f5e6f30</Item>
+            <Item Key="DebugMode">true</Item>
           </Metadata>
         </TechnicalProfile>
 
@@ -42,11 +54,24 @@
           <Metadata>
             <Item Key="Operation">Read</Item>
             <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+            <Item Key="DebugMode">true</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
           </InputClaims>
+
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
+              <Preconditions>
+                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
+                  <Value>signInNames.emailAddress</Value>
+                  <Action>SkipThisOutputClaimsTransformation</Action>
+                </Precondition>
+              </Preconditions>
+            </OutputClaimsTransformation>
+          </OutputClaimsTransformations>
+          
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <OutputClaim ClaimTypeReferenceId="displayName" />
@@ -55,9 +80,7 @@
             <OutputClaim ClaimTypeReferenceId="surname" />
             <OutputClaim ClaimTypeReferenceId="email" />
           </OutputClaims>
-          <OutputClaimsTransformations>
-            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail" />
-          </OutputClaimsTransformations>
+
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -71,6 +94,7 @@
           <Metadata>
             <Item Key="client_id">acd2113a-7273-42b4-bfe2-6326d0a19471</Item>
             <Item Key="IdTokenAudience">ba415fe5-e920-4ca3-9696-0beeb4423a18</Item>
+            <Item Key="DebugMode">true</Item>
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="acd2113a-7273-42b4-bfe2-6326d0a19471" />
@@ -88,6 +112,21 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
           <DisplayName>Local Account Signin</DisplayName>
+          <Metadata>
+            <Item Key="DebugMode">true</Item>
+          </Metadata>
+
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
+              <Preconditions>
+                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
+                  <Value>signInNames.emailAddress</Value>
+                  <Action>SkipThisOutputClaimsTransformation</Action>
+                </Precondition>
+              </Preconditions>
+            </OutputClaimsTransformation>
+          </OutputClaimsTransformations>
+          
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
           </OutputClaims>
@@ -106,6 +145,21 @@
         <!-- Override for the Sign-Up process -->
         <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">  
           <DisplayName>Local Account Signup</DisplayName>
+          <Metadata>
+            <Item Key="DebugMode">true</Item>
+          </Metadata>
+
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
+              <Preconditions>
+                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
+                  <Value>signInNames.emailAddress</Value>
+                  <Action>SkipThisOutputClaimsTransformation</Action>
+                </Precondition>
+              </Preconditions>
+            </OutputClaimsTransformation>
+          </OutputClaimsTransformations>
+          
           <ValidationTechnicalProfiles>   
             <!-- 1. Create the user in B2C -->
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
@@ -171,20 +225,6 @@
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
-
-  <ClaimsTransformations>
-    <ClaimsTransformation Id="CopySignInNamesEmailToEmail" TransformationMethod="FormatString">
-      <InputClaims>
-        <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" TransformationClaimType="inputClaim1" />
-      </InputClaims>
-      <InputParameters>
-        <InputParameter Id="stringFormat" DataType="string" Value="{0}" />
-      </InputParameters>
-      <OutputClaims>
-        <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim" />
-      </OutputClaims>
-    </ClaimsTransformation>
-  </ClaimsTransformations>
 
   <UserJourneys>
     <UserJourney Id="SignUpOrSignIn">
