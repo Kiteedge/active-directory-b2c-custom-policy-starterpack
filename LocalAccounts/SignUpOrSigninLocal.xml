@@ -6,7 +6,9 @@
   PolicySchemaVersion="0.3.0.0"
   TenantId="keapex.onmicrosoft.com"
   PolicyId="B2C_1A_signup_signin_local"
-  PublicPolicyUri="http://keapex.onmicrosoft.com/B2C_1A_signup_signin_local">
+  PublicPolicyUri="http://keapex.onmicrosoft.com/B2C_1A_signup_signin_local"
+  DeploymentMode="Development"
+  UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
 
   <BasePolicy>
     <TenantId>keapex.onmicrosoft.com</TenantId>
@@ -19,6 +21,11 @@
       <!--points to refresh token journey when app makes refresh token request-->
       <Endpoint Id="Token" UserJourneyReferenceId="RedeemRefreshToken" />
     </Endpoints>
+    
+    <UserJourneyBehaviors>
+      <JourneyInsights TelemetryEngine="ApplicationInsights" ConnectionString="InstrumentationKey=5301171c-a558-4305-9e18-8a2eb17343b3;IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/;LiveEndpoint=https://uksouth.livediagnostics.monitor.azure.com/;ApplicationId=08257696-0a7c-45a6-a53e-ffba2c7268a2" DeveloperMode="true" ClientEnabled="false" ServerEnabled="true" TelemetryVersion="1.0.0" />
+    </UserJourneyBehaviors>
+    
     <TechnicalProfile Id="PolicyProfile">
       <DisplayName>PolicyProfile</DisplayName>
       <Protocol Name="OpenIdConnect" />

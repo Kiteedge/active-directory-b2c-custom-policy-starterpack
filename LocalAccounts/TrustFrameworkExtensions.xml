@@ -21,17 +21,6 @@
         <UserHelpText>Indicates if the user has been created in the external system.</UserHelpText>
       </ClaimType>
     </ClaimsSchema>
-
-    <ClaimsTransformations>
-      <ClaimsTransformation Id="CopySignInNamesEmailToEmail" TransformationMethod="CopyClaim">
-        <InputClaims>
-          <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" TransformationClaimType="inputClaim" />
-        </InputClaims>
-        <OutputClaims>
-          <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim" />
-        </OutputClaims>
-      </ClaimsTransformation>
-    </ClaimsTransformations>
   </BuildingBlocks>
 
   <ClaimsProviders>    
@@ -60,27 +49,13 @@
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
           </InputClaims>
-
-          <OutputClaimsTransformations>
-            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
-              <Preconditions>
-                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
-                  <Value>signInNames.emailAddress</Value>
-                  <Action>SkipThisOutputClaimsTransformation</Action>
-                </Precondition>
-              </Preconditions>
-            </OutputClaimsTransformation>
-          </OutputClaimsTransformations>
-          
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <OutputClaim ClaimTypeReferenceId="displayName" />
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
-            <OutputClaim ClaimTypeReferenceId="email" />
           </OutputClaims>
-
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -101,7 +76,7 @@
             <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="ba415fe5-e920-4ca3-9696-0beeb4423a18" />
           </InputClaims>
           <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
           </OutputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -115,20 +90,8 @@
           <Metadata>
             <Item Key="DebugMode">true</Item>
           </Metadata>
-
-          <OutputClaimsTransformations>
-            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
-              <Preconditions>
-                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
-                  <Value>signInNames.emailAddress</Value>
-                  <Action>SkipThisOutputClaimsTransformation</Action>
-                </Precondition>
-              </Preconditions>
-            </OutputClaimsTransformation>
-          </OutputClaimsTransformations>
-          
           <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
           </OutputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -148,17 +111,6 @@
           <Metadata>
             <Item Key="DebugMode">true</Item>
           </Metadata>
-
-          <OutputClaimsTransformations>
-            <OutputClaimsTransformation ReferenceId="CopySignInNamesEmailToEmail">
-              <Preconditions>
-                <Precondition Type="ClaimExists" ExecuteActionsIf="false">
-                  <Value>signInNames.emailAddress</Value>
-                  <Action>SkipThisOutputClaimsTransformation</Action>
-                </Precondition>
-              </Preconditions>
-            </OutputClaimsTransformation>
-          </OutputClaimsTransformations>
           
           <ValidationTechnicalProfiles>   
             <!-- 1. Create the user in B2C -->
@@ -215,7 +167,7 @@
           </Metadata>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" />
-            <InputClaim ClaimTypeReferenceId="email" />
+            <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <InputClaim ClaimTypeReferenceId="givenName" />
             <InputClaim ClaimTypeReferenceId="surname" />
             <InputClaim ClaimTypeReferenceId="displayName" />
